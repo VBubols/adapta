@@ -1,4 +1,5 @@
 import Usuario from '../models/usuario.model.js';
+import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 
 export async function perfil(req, res) {
@@ -15,7 +16,7 @@ export async function atualizarPerfil(req, res) {
         const user = await Usuario.findByPk(req.usuario.id);
         const { nome, email } = req.body;
         const updateData = {};
-        console.log(user)
+        
         if(email){
             const existing = await Usuario.findOne({
                 where: {
@@ -39,7 +40,27 @@ export async function atualizarPerfil(req, res) {
 
         return res.status(200).json(userResponse);
     } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
+export async function atualizarSenha(req, res) {
+    try {
+        const { senhaAntiga, novaSenha } = req.body;
+        const user = await Usuario.findByPk(req.usuario.id);
+        
+        const compararSenha = await bcrypt.compare(senhaAntiga, user.senha);
+
+        if(!compararSenha){
+            return res.status(401).json({mensagem: 'Credenciais inválidas!'});
+        };
+
+        const senhaHash = await bcrypt.hash(novaSenha, 10);
+        await user.update({senha: senhaHash});
+
+        return res.status(204).send();
+    } catch (error) {
         console.log(error)
         return res.status(500).json(error);
     }
-}
+};
