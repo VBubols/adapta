@@ -1,4 +1,5 @@
 import Usuario from '../models/usuario.model.js';
+import { Op } from 'sequelize';
 
 export async function perfil(req, res) {
     try {
@@ -14,9 +15,9 @@ export async function atualizarPerfil(req, res) {
         const user = await Usuario.findByPk(req.usuario.id);
         const { nome, email } = req.body;
         const updateData = {};
-
+        console.log(user)
         if(email){
-            const existing = await User.findOne({
+            const existing = await Usuario.findOne({
                 where: {
                     email: email,
                     id: { [Op.ne]: user.id }
@@ -38,6 +39,7 @@ export async function atualizarPerfil(req, res) {
 
         return res.status(200).json(userResponse);
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error);
     }
 }
