@@ -1,5 +1,5 @@
 import express from 'express';
-import { perfil, atualizarPerfil } from '../controllers/ususario.controller.js';
+import { perfil, atualizarPerfil } from '../controllers/usuario.controller.js';
 import { autenticar } from '../middlewares/auth.middleware.js';
 
 const userRouter = express.Router();
