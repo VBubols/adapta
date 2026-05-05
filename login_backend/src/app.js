@@ -1,12 +1,19 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import sequelize from './config/database.js';
 import './models/usuario.model.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/usuario.routes.js';
+import { corsConfig } from './config/cors.js'
+import { helmetConfig } from './config/helmt.js';
+import { limitadorGlobal } from './config/rateLimit.js';
 
 const app = express();
 app.use(express.json());
+app.use(cors(corsConfig));
+app.use(helmetConfig);
+app.use(limitadorGlobal)
 
 app.use('/auth', authRouter);
 app.use('/usuario', userRouter);
