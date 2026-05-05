@@ -7,13 +7,18 @@ export async function perfil(req, res) {
         const perfil = await Usuario.findByPk(req.usuario.id, { attributes: { exclude: ['senha'] } });
         return res.status(200).json(perfil);
     } catch (error) {
-        return res.status(500).json(error); 
+        console.error(error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor' }); 
     }
 };
 
 export async function atualizarPerfil(req, res) {
     try {
         const user = await Usuario.findByPk(req.usuario.id);
+        if (!user) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+
         const { nome, email } = req.body;
         const updateData = {};
         
@@ -40,7 +45,8 @@ export async function atualizarPerfil(req, res) {
 
         return res.status(200).json(userResponse);
     } catch (error) {
-        return res.status(500).json(error);
+        console.error(error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor' });
     }
 };
 
@@ -48,6 +54,9 @@ export async function atualizarSenha(req, res) {
     try {
         const { senhaAntiga, novaSenha } = req.body;
         const user = await Usuario.findByPk(req.usuario.id);
+        if (!user) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
         
         const compararSenha = await bcrypt.compare(senhaAntiga, user.senha);
 
@@ -60,7 +69,22 @@ export async function atualizarSenha(req, res) {
 
         return res.status(204).send();
     } catch (error) {
-        console.log(error)
-        return res.status(500).json(error);
+        console.error(error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor' });
+    }
+};
+
+export async function desativarConta(req, res) {
+    try {
+        const user = await Usuario.findByPk(req.usuario.id);
+        if (!user) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+
+        await user.update({ativo: false});
+        return res.status(204).send()
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor' });
     }
 };
