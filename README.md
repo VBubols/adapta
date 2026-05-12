@@ -91,13 +91,13 @@ node login_backend/src/index.js
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `POST` | `/auth/register` | Cria um novo usuário |
+| `POST` | `/auth/cadastro` | Cria um novo usuário |
 | `POST` | `/auth/login` | Autentica e retorna um token JWT |
 
 ### Exemplo — Registro
 
 ```http
-POST /auth/register
+POST /auth/cadastro
 Content-Type: application/json
 
 {
