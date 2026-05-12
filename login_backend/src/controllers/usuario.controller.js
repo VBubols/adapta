@@ -30,7 +30,7 @@ export async function atualizarPerfil(req, res) {
                 }
             });
             if (existing) {
-                return res.status(400).json({ mensagem: 'Email já cadastrado' });
+                return res.status(409).json({ mensagem: 'Email já cadastrado' });
             } else{
                 updateData.email = email;
             }

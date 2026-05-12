@@ -36,6 +36,10 @@ export async function login (req, res) {
             return res.status(401).json({mensagem: 'Credenciais inválidas!'});
         };
 
+        if(!usuario.ativo){
+            return res.status(403).json({mensagem: 'Esta conta foi desativada!'});
+        };
+
         const compararSenha = await bcrypt.compare(senha, usuario.senha);
     
         if(!compararSenha){
