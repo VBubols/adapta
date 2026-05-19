@@ -19,3 +19,13 @@ export const limitadorUsuario = rateLimit({
     standardHeaders: true,
     legacyHeaders: false
 });
+
+export const limitadorLogin = rateLimit({
+    windowMs: 15*60*1000,
+    max: 3,
+    message: {
+        erro: 'Limite de 3 requisições excedido!'
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+});
