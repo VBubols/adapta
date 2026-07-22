@@ -1,33 +1,42 @@
 import sequelize from '../config/database.js';
 import { DataTypes } from 'sequelize';
 
-export const Usuario = sequelize.define('Usuario', {
+export const Usuario = sequelize.define(
+  'Usuario',
+  {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
+      type: DataTypes.UUID,
+      autoIncrement: true,
+      primaryKey: true,
     },
     nome: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: { isEmail: true}
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: { isEmail: true },
     },
     senha: {
-        type: DataTypes.STRING,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     ativo: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
-    }
-}, {
-    tableName: 'usuarios',
-    timestamps: true
-});
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    role: {
+      type: DataTypes.ENUM('aluno', 'admin'),
+      allowNull: false,
+      defaultValue: 'aluno',
+    },
+  },
+  {
+    tableName: 'usuario',
+    timestamps: true,
+  },
+);
 
 export default Usuario;
