@@ -4,18 +4,16 @@ import { ZodError } from 'zod';
 
 export async function criarTrilha(req, res) {
   try {
-    const { tema, userId } = req.body;
+    const { tema } = req.body;
 
     if (!tema || typeof tema !== 'string' || !tema.trim()) {
       return res.status(400).json({ erro: 'tema é obrigatório' });
     }
-    if (!userId) {
-      return res.status(400).json({ erro: 'userId é obrigatório' }); 
-    }
 
     const dados = await gerarTrilha({ tema });
 
-    const trilha = await Trilha.create({ ...dados, userId });
+    // O dono é o usuário logado (via JWT) — sem muleta de userId no body.
+    const trilha = await Trilha.create({ ...dados, userId: req.usuario.id });
 
     return res.status(201).json({ trilha });
   } catch (err) {
@@ -30,10 +28,29 @@ export async function criarTrilha(req, res) {
 
 export async function listarTrilhas(req, res) {
   try {
-    const trilhas = await Trilha.findAll();
+    const trilhas = await Trilha.findAll({
+      where: { userId: req.usuario.id },
+      order: [['createdAt', 'DESC']],
+    });
     return res.status(200).json({ trilhas });
   } catch (err) {
     console.error('Erro ao listar trilhas:', err);
     return res.status(500).json({ erro: 'Erro interno ao listar trilhas' });
+  }
+}
+
+export async function obterTrilha(req, res) {
+  try {
+    const trilha = await Trilha.findByPk(req.params.id);
+    if (!trilha) {
+      return res.status(404).json({ erro: 'Trilha não encontrada' });
+    }
+    if (trilha.userId !== req.usuario.id) {
+      return res.status(403).json({ erro: 'Esta trilha não pertence a você' });
+    }
+    return res.status(200).json({ trilha });
+  } catch (err) {
+    console.error('Erro ao obter trilha:', err);
+    return res.status(500).json({ erro: 'Erro interno ao obter trilha' });
   }
 }

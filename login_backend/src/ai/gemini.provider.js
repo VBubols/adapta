@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
-import { diagnosticSchema } from '../schemas/study.schema.js'; 
+import { diagnosticSchema, studyPlanSchema } from '../schemas/study.schema.js';
 import { trilhaSchema } from '../schemas/trilha.schema.js';
 
 let ai;
@@ -93,4 +93,59 @@ export async function gerarTrilha({ tema }) {
 
   // Aqui o schema é um objeto plano — devolve ele INTEIRO (mapeia 1:1 com as colunas)
   return trilhaSchema.parse(parsed);
+}
+// ---------------------------------------------------------------------------
+// Plano de estudo (RF13-16). Gerado a partir da trilha e, opcionalmente, do
+// desempenho do aluno na avaliação diagnóstica — é o que torna o plano adaptativo.
+// ---------------------------------------------------------------------------
+const studyPlanJsonSchema = z.toJSONSchema(studyPlanSchema);
+
+const systemInstructionPlano =
+  'Você é um planejador pedagógico. Gere um plano de estudo em português do Brasil, ' +
+  'organizado em etapas progressivas (do básico ao avançado). Cada etapa deve ter um ' +
+  '"titulo", uma lista de "conteudos" (frases curtas e objetivas) e um "tempoEstimado" ' +
+  '(ex: "6 horas"). O campo "etapa" deve ser um rótulo curto (ex: "Etapa 1"). ' +
+  'Quando for informado o desempenho do aluno, PRIORIZE os tópicos em que ele teve mais ' +
+  'dificuldade, dedicando mais tempo e etapas a eles.';
+
+export async function gerarPlano({ trilha, desempenho = null }) {
+  const client = getClient();
+
+  const competencias = JSON.stringify(trilha.competencias || []);
+  const topicos = JSON.stringify(trilha.topicos || []);
+  const habilidades = JSON.stringify(trilha.habilidades || []);
+
+  let contents =
+    `Gere um plano de estudo completo para a trilha a seguir.\n` +
+    `Título: ${trilha.titulo}\n` +
+    `Descrição: ${trilha.descricao || 'sem descrição'}\n` +
+    `Competências: ${competencias}\n` +
+    `Tópicos: ${topicos}\n` +
+    `Habilidades: ${habilidades}`;
+
+  if (desempenho) {
+    contents +=
+      `\n\nDesempenho do aluno na avaliação diagnóstica ` +
+      `(use para priorizar as fraquezas): ${JSON.stringify(desempenho)}`;
+  }
+
+  const response = await client.models.generateContent({
+    model: 'gemini-3.5-flash',
+    contents,
+    config: {
+      systemInstruction: systemInstructionPlano,
+      responseMimeType: 'application/json',
+      responseJsonSchema: studyPlanJsonSchema,
+    },
+  });
+
+  let parsed;
+  try {
+    parsed = JSON.parse(response.text);
+  } catch {
+    throw new Error('IA retornou um JSON inválido (não parseou)');
+  }
+
+  // Devolve só o array de etapas — o controller grava na coluna "cronograma".
+  return studyPlanSchema.parse(parsed).cronograma;
 }
