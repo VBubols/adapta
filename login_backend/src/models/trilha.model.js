@@ -1,9 +1,15 @@
-import sequelize from '../config/database';
+import sequelize from '../config/database.js';
 import { DataTypes } from 'sequelize';
+import Usuario from './usuario.model.js'
 
 export const Trilha = sequelize.define(
   'Trilha',
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
     titulo: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -26,8 +32,9 @@ export const Trilha = sequelize.define(
       allowNull: false,
       defaultValue: [],
     },
-    adminId: {
-      type: DataTypes.NUMBER,
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false
     },
   },
   {
@@ -35,3 +42,8 @@ export const Trilha = sequelize.define(
     timestamps: true,
   },
 );
+
+Usuario.hasMany(Trilha, { foreignKey: 'userId' });
+Trilha.belongsTo(Usuario, { foreignKey: 'userId' });
+
+export default Trilha;

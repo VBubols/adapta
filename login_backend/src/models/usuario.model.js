@@ -6,7 +6,7 @@ export const Usuario = sequelize.define(
   {
     id: {
       type: DataTypes.UUID,
-      autoIncrement: true,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     nome: {
@@ -26,11 +26,6 @@ export const Usuario = sequelize.define(
     ativo: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-    },
-    role: {
-      type: DataTypes.ENUM('aluno', 'admin'),
-      allowNull: false,
-      defaultValue: 'aluno',
     },
   },
   {
