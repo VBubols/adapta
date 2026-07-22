@@ -6,6 +6,7 @@ import './models/usuario.model.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/usuario.routes.js';
 import avalicaoRouter from './routes/avaliacao.routes.js';
+import trilhaRoutes from './routes/trilha.routes.js';
 import { corsConfig } from './config/cors.js'
 import { helmetConfig } from './config/helmt.js';
 import { limitadorGlobal } from './config/rateLimit.js';
@@ -18,7 +19,8 @@ app.use(limitadorGlobal)
 
 app.use('/auth', authRouter);
 app.use('/usuario', userRouter);
-app.use('/avaliacao', avalicaoRouter);
+app.use('/avaliacoes', avalicaoRouter);
+app.use('/trilhas', trilhaRoutes);
 
 sequelize.sync({ alter: true }).then( () => {
     app.listen(process.env.PORT, () => {
