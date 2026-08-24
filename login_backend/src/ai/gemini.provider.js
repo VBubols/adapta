@@ -17,7 +17,8 @@ const systemInstruction =
   'Regras de formato: as alternativas devem vir SEM prefixo (nada de "A)", "B)"); ' +
   '"respostaCorreta" é o ÍNDICE (0 a 3) da alternativa correta dentro do array "alternativas"; ' +
   'distribua as questões entre os tópicos e habilidades fornecidos; ' +
-  'a "dificuldade" de cada questão deve girar em torno da dificuldade pedida.';
+  'a "dificuldade" de cada questão deve girar em torno da dificuldade pedida.' + 
+  'responda em português do Brasil com acentuação e ortografia corretas';
 
 export async function gerarAvaliacao({ trilha, tipo, dificuldade, quantidade = 5 }) {
   const client = getClient();
