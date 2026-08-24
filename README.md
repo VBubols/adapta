@@ -42,7 +42,8 @@ Construída com **React** no front-end, **Node.js + Express** no back-end e **Po
 ## Estrutura do projeto
 
 ```
-sistema_login/
+sistema_de_login/
+├── package.json             # dependências e scripts do back-end
 ├── login_backend/
 │   └── src/
 │       ├── ai/              # provider da IA (Gemini)
@@ -54,6 +55,7 @@ sistema_login/
 │       ├── schemas/         # schemas Zod (entrada e saída da IA)
 │       └── app.js           # ponto de entrada
 └── login_frontend/
+    ├── package.json         # dependências e scripts do front-end
     └── src/
         ├── components/      # Layout, ProtectedRoute
         ├── context/         # AuthContext
@@ -104,8 +106,10 @@ Roteiro dividido em etapas progressivas, com estimativa de carga horária por et
 
 ### Back-end
 
+As dependências do back-end ficam no `package.json` da **raiz** do repositório, então a
+instalação é feita ali — não dentro de `login_backend/`.
+
 ```bash
-cd login_backend
 npm install
 ```
 
@@ -126,11 +130,17 @@ JWT_EXPIRES_IN=1d
 GEMINI_KEY=sua_chave_do_gemini
 ```
 
-Inicie o servidor:
+Inicie o servidor a partir da raiz:
 
 ```bash
-cd src
-node app.js
+npm run dev
+```
+
+O script `dev` usa **nodemon** e reinicia o servidor a cada alteração no código. Para
+rodar sem watch:
+
+```bash
+npm start
 ```
 
 O Sequelize sincroniza as tabelas automaticamente na inicialização.
