@@ -65,6 +65,36 @@ sistema_login/
 
 ---
 
+## Telas
+
+### Autenticação
+
+| Login | Cadastro |
+|:---:|:---:|
+| ![Tela de login](docs/screenshots/login.png) | ![Tela de cadastro](docs/screenshots/cadastro.png) |
+
+### Criação de trilhas
+
+Após autenticado, o usuário informa um tema e a IA monta a trilha completa com competências, tópicos e habilidades.
+
+![Tela inicial com o formulário de criação e a lista de trilhas do usuário](docs/screenshots/tela_inicial.png)
+
+A partir da trilha gerada é possível disparar os dois fluxos de IA: a avaliação diagnóstica e o plano de estudo, ambos parametrizados por nível de dificuldade.
+
+![Detalhe da trilha com competências e tópicos](docs/screenshots/trilha.png)
+
+### Avaliação diagnóstica
+
+Questões de múltipla escolha geradas a partir dos tópicos da trilha, com correção automática e atribuição de nível ao final.
+
+![Avaliação diagnóstica em andamento](docs/screenshots/avaliacao.png)
+
+### Plano de estudo
+
+Roteiro dividido em etapas progressivas, com estimativa de carga horária por etapa.
+
+![Plano de estudo em etapas](docs/screenshots/plano_de_estudo.png)
+
 ## Como rodar
 
 ### Pré-requisitos
